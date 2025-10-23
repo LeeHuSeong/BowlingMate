@@ -1,0 +1,21 @@
+[클라이언트]
+   ↓ (영상 업로드 + pitch_type 전송)
+POST /analyze_pose
+   ↓
+──────────────────────────────────────────────
+  [Flask 서버 내부]
+   ① upload_dir에 영상 저장
+   ② MoveNet으로 raw + norm keypoints 추출
+   ③ 기준 자세(reference) 불러오기
+   ④ DTW로 frame alignment + diff_seq 생성
+   ⑤ LSTM 모델 로드 후 프레임별 예측
+   ⑥ OpenCV로 시각화된 비교 영상 생성
+   ⑦ output/comparison 폴더에 mp4 저장
+   ⑧ JSON 응답 (점수, 피드백, 파일 경로)
+──────────────────────────────────────────────
+   ↓
+[클라이언트]
+  → comparison_path 경로 받아서 video_route로 조회
+GET /video/<filename>
+   ↓
+로컬 서버에서 mp4 스트리밍
