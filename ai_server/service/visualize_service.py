@@ -53,7 +53,7 @@ def render_frame(args):
     # 캔버스 초기화
     canvas = np.full((h + pad * 2, w, 3), 255, dtype=np.uint8)
     canvas[pad:pad + h, 0:w] = frame
-
+ 
     # 현재 프레임 diff 계산
     diff = diff.reshape(17, 2)
     mags = np.linalg.norm(diff, axis=1)  # 각 관절별 차이 크기
@@ -142,9 +142,10 @@ def visualize_pose_feedback(raw_keypoints, norm_keypoints, labels, diff_seq, top
         for i in range(safe_len)
     ]
 
-    print(f"병렬 렌더링 시작 ({len(args)} frames)...")
-    with Pool(processes=min(cpu_count(), 4)) as pool:
-        results = pool.map(render_frame, args)
+    print(f"렌더링 시작 ({len(args)} frames)...")
+    results = []
+    for arg in args:
+        results.append(render_frame(arg))
 
     for canvas in results:
         out.write(canvas)
