@@ -2,8 +2,6 @@ import numpy as np
 import cv2
 import subprocess
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-from multiprocessing import Pool, cpu_count
 
 JOINT_FEEDBACK_MAP = {
     0: "머리 위치가 흔들리고 있습니다.",

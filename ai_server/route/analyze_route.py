@@ -1,4 +1,6 @@
 import cv2
+import shutil
+
 from flask import Blueprint, request, jsonify
 from service.movenet_service import extract_keypoints_from_video
 from service.dtw_service import compare_poses_with_score, compute_diff_sequence
@@ -122,10 +124,15 @@ def analyze_pose():
             feedback_text += "모든 관절이 안정적으로 유지되었습니다."
 
         #시각화 결과 저장(local)
-        comparison_dir = f"output/comparison/{uid}"
-        os.makedirs(comparison_dir, exist_ok=True)
+        comparison_dir_local = f"output/comparison/{uid}"
+        comparison_dir_shared = f"/app/shared/comparison/{uid}"  
+
+        os.makedirs(comparison_dir_local, exist_ok=True)
+        os.makedirs(comparison_dir_shared, exist_ok=True)
+
         comparison_name = f"comparison_{uuid.uuid4().hex}.mp4"
-        comparison_path = os.path.join(comparison_dir, comparison_name)
+        comparison_path_local = os.path.join(comparison_dir_local, comparison_name)
+        comparison_path_shared = os.path.join(comparison_dir_shared, comparison_name)
 
         visualize_pose_feedback(
             raw_keypoints=raw_keypoints,
@@ -133,11 +140,14 @@ def analyze_pose():
             labels=labels,
             diff_seq=diff_seq,
             top_joints=top_joints,
-            save_path=comparison_path,
+            save_path=comparison_path_local,
             source_video=cropped_path
         )
 
-        print(f"[SAVE] 시각화 완료: {comparison_path}")
+        shutil.copyfile(comparison_path_local, comparison_path_shared)
+
+        print(f"[SAVE] 시각화 완료: {comparison_path_local}")
+        print(f"[SHARED] 복사 완료: {comparison_path_shared}")
 
         #결과 응답(local path)
         return jsonify({
@@ -156,7 +166,7 @@ def analyze_pose():
                 "description": "AI가 예측한 LSTM 기반 프레임별 동작 안정도 (높을수록 좋음)"
             },
             "feedback": feedback_text,
-            "comparison_video_path": comparison_path
+            "comparison_video_path": comparison_path_shared
         })
     
     except Exception as e:
