@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class DtwResult {
     private double distance;
     private double score;
+    private String description;
 }

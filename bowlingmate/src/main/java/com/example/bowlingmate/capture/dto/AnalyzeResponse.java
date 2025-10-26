@@ -1,7 +1,12 @@
 package com.example.bowlingmate.capture.dto;
 
+import java.util.List;
+import com.google.cloud.Timestamp;
+import com.example.bowlingmate.common.json.TimestampSerializer;
+import com.example.bowlingmate.common.json.TimestampDeserializer;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +17,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AnalyzeResponse {
-    @JsonProperty("comparison_video_path")
-    private String comparisonVideoPath;
+    private String uid;
+    private String analysis_id;
+
+    private String pitch_type;
+    private List<Integer> range;
     private DtwResult dtw;
     private LstmResult lstm;
+
     private String feedback;
-    @JsonProperty("pitch_type")
-    private String pitchType;
+
+    private String comparison_video_path;
+
+    @JsonSerialize(using = TimestampSerializer.class)
+    @JsonDeserialize(using = TimestampDeserializer.class)
+    private Timestamp created_at;
 }
