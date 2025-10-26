@@ -1,14 +1,6 @@
 version: "3.8"
 
 services:
-  flask:
-    build: ./ai_server
-    container_name: bowling-flask
-    ports:
-      - "5000:5000"
-    volumes:
-      - ./shared:/app/shared
-
   spring:
     build: ./bowlingmate
     container_name: bowling-spring
@@ -18,5 +10,13 @@ services:
       - flask
     environment:
       - FLASK_URL=http://flask:5000
+    volumes:
+      - ./shared:/app/shared   # 결과 공유 폴더
+
+  flask:
+    build: ./ai_server
+    container_name: bowling-flask
+    ports:
+      - "5000:5000"
     volumes:
       - ./shared:/app/shared
