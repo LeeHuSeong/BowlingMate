@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "721408750928",
+    "project_id": "bowlingcapture",
+    "storage_bucket": "bowlingcapture.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721408750928:android:8164ecc5ac7e3b84d96855",
+        "android_client_info": {
+          "package_name": "com.bowlingmate.bowling_mate_front"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLSJ1uEgfuqfZILaONi4OwM_JUz-RpPPc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
