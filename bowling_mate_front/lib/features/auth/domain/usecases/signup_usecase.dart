@@ -4,10 +4,7 @@ import '../../data/models/signup_request.dart';
 
 class SignupUseCase {
   final AuthRepository repository;
-
   SignupUseCase(this.repository);
 
-  Future<User> call(SignupRequest request) async {
-    return await repository.signup(request);
-  }
+  Future<User> execute(SignupRequest request) => repository.signup(request);
 }
