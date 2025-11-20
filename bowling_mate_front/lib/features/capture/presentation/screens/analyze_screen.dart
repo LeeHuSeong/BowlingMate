@@ -72,7 +72,7 @@ class _AnalyzeScreenState extends State<AnalyzeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🎬 영상 (적당한 크기 + 비율 유지)
+            // 영상 (적당한 크기 + 비율 유지)
             Container(
               height: 430,
               width: double.infinity,

@@ -22,8 +22,8 @@ import com.google.cloud.Timestamp;
 @Service
 public class AuthService {
     private final JwtUtil jwtUtil;
-    private final Firestore firestore;       // Firestore Bean
-    private final FirebaseAuth firebaseAuth; // FirebaseAuth Bean
+    private final Firestore firestore;      
+    private final FirebaseAuth firebaseAuth; 
     @Value("${firebase.api.key}")
     private String firebaseApiKey;
 

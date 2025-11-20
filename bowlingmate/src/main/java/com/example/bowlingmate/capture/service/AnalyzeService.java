@@ -76,10 +76,9 @@ public class AnalyzeService {
             if (path != null && path.startsWith("/app/shared/comparison")) {
                 // /app/shared/comparison/ → /video/
                 String relative = path.replace("/app/shared/comparison/", "");
-                // 에뮬레이터에서는 10.0.2.2, 실서버에서는 도메인/IP로 교체
                 String publicUrl = "http://10.0.2.2:8080/video/" + relative;
                 result.setComparison_video_path(publicUrl);
-                System.out.println("🎥 변환된 영상 URL: " + publicUrl);
+                System.out.println("변환된 영상 URL: " + publicUrl);
             }
 
             // Firestore 저장
