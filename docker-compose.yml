@@ -10,6 +10,7 @@ services:
       - flask
     environment:
       - FLASK_URL=http://flask:5000
+      - FIREBASE_API_KEY=${FIREBASE_API_KEY}
     volumes:
       - ./shared:/app/shared   # 결과 공유 폴더
 
