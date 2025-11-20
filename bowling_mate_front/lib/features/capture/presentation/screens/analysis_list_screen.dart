@@ -37,7 +37,7 @@ class _AnalysisListScreenState extends State<AnalysisListScreen> {
         headers: {"Authorization": "Bearer $token"},
       ));
 
-      final response = await dio.get("/api/analyze/history/$uid");
+      final response = await dio.get("api/analyze/history/$uid");
 
       if (response.statusCode == 200) {
         final data = (response.data as List).cast<Map<String, dynamic>>();
@@ -146,6 +146,7 @@ class _AnalysisListScreenState extends State<AnalysisListScreen> {
                 videoPath: record['comparison_video_path'] ?? '',
                 startTime: 0,
                 endTime: 0,
+                resultData: record,
               ),
             ),
           );

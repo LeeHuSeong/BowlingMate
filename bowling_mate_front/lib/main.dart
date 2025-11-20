@@ -47,6 +47,7 @@ class BowlingMateApp extends StatelessWidget {
   }
 }
 
+/// 로그인 여부 체크 후 라우팅
 class _AuthGate extends StatefulWidget {
   const _AuthGate();
 
@@ -66,6 +67,7 @@ class _AuthGateState extends State<_AuthGate> {
 
   Future<void> _checkToken() async {
     final token = await PreferencesHelper.getJwt();
+    await Future.delayed(const Duration(milliseconds: 400)); // 약간의 딜레이로 부드럽게
     setState(() {
       _loggedIn = token != null && token.isNotEmpty;
       _checking = false;
@@ -76,7 +78,24 @@ class _AuthGateState extends State<_AuthGate> {
   Widget build(BuildContext context) {
     if (_checking) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        backgroundColor: Color(0xFFF8FAFF),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(color: Color(0xFF1565C0)),
+              SizedBox(height: 18),
+              Text(
+                "Bowling Mate 로딩 중...",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
     return _loggedIn ? const MainNavigationScreen() : const LoginScreen();

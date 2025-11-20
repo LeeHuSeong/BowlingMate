@@ -45,7 +45,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
         headers: {"Authorization": "Bearer $token"},
       ));
 
-      final res = await dio.get("/api/analyze/$uid");
+      final res = await dio.get("api/analyze/$uid");
       if (res.statusCode == 200) {
         final data = (res.data as List).cast<Map<String, dynamic>>();
         setState(() {
@@ -100,7 +100,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           child: Column(
             children: [
-              // 🧑 프로필 카드
+              // 프로필 카드
               Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -247,6 +247,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     videoPath: record['comparison_video_path'] ?? '',
                     startTime: 0,
                     endTime: 0,
+                    resultData: record,
                   ),
                 ),
               ),

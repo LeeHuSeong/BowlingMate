@@ -1,5 +1,6 @@
 import cv2
 import shutil
+import numpy as np 
 
 from flask import Blueprint, request, jsonify
 from service.movenet_service import extract_keypoints_from_video
@@ -89,11 +90,36 @@ def analyze_pose():
         dtw_score, distance, ref, test, path = compare_poses_with_score(reference_path, norm_keypoints)
         diff_seq = compute_diff_sequence(ref, test, path)
         labels, confidence = predict_framewise_labels(diff_seq, model_path)
-        lstm_score = round(confidence * 100, 2)
-        top_joints = summarize_top_joints(diff_seq, labels, 4)
+        diff_array = np.abs(diff_seq)
+        if diff_array.ndim == 3:
+            diff_array = np.linalg.norm(diff_array, axis=2)  # (frames, joints)
 
-        #이상 프레임 비율 계산
+        # 상위 10% 이상 오차를 이상치로 간주
+        joint_threshold = np.percentile(diff_array, 90)
+        frame_joint_error_ratio = np.mean(diff_array > joint_threshold, axis=1)  # 프레임별 틀린 관절 비율
+        joint_stability = 1 - np.mean(frame_joint_error_ratio)  # 평균 안정도 (1=안정, 0=불안정)
+
+        # LSTM confidence 기반 안정도 (기존 값)
+        lstm_conf_score = (np.mean(confidence) ** 2.5) * 100
+
+        # 관절 안정도 (비율 완화)
+        joint_stability = max(0, min(1, joint_stability))
+
+        # 혼합 점수 (LSTM 비중 ↑)
+        lstm_score = round((lstm_conf_score * 0.7) + (joint_stability * 100 * 0.3), 2)
+        lstm_score = min(100, max(0, lstm_score))
+
+        # DTW 점수 (더 빡빡한 감점 적용)
+        dtw_norm = min(distance / 3000, 1.0)
+        dtw_score = max(0, round(100 * (1 - dtw_norm ** 1.3), 2))
+
+        # 이상 프레임 비율
         wrong_ratio = sum(labels) / len(labels) if len(labels) > 0 else 0
+
+        # 종합 점수 (LSTM 50%, DTW 30%, 안정도 20%)
+        overall_score = round(lstm_score * 0.5 + dtw_score * 0.3 + (1 - wrong_ratio) * 20, 2)
+
+        top_joints = summarize_top_joints(diff_seq, labels, 4)
 
         #관절별 피드백 문장 구성
         feedback_lines = []
@@ -112,14 +138,14 @@ def analyze_pose():
 
         #점수 기반 총평 메시지
         feedback_text = (
-            f"**분석 요약**\n"
+            f"분석 요약\n"
             f"LSTM 안정도: {lstm_score:.2f}점\n"
             f"DTW 유사도: {dtw_score:.2f}점\n\n"
-            f"**총평:** {summary}\n\n"
+            f"총평:\n {summary}\n\n"
         )
 
         if feedback_lines:
-            feedback_text += "**개선이 필요한 부위:**\n- " + "\n- ".join(feedback_lines)
+            feedback_text += "개선이 필요한 부위:\n- " + "\n- ".join(feedback_lines)
         else:
             feedback_text += "모든 관절이 안정적으로 유지되었습니다."
 

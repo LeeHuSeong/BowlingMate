@@ -70,6 +70,19 @@ public class AnalyzeService {
         AnalyzeResponse result = response.getBody();
         if (result != null) {
             result.setCreated_at(Timestamp.now());
+
+            // Flask가 준 비교 영상 경로를 URL로 변환
+            String path = result.getComparison_video_path();
+            if (path != null && path.startsWith("/app/shared/comparison")) {
+                // /app/shared/comparison/ → /video/
+                String relative = path.replace("/app/shared/comparison/", "");
+                // 에뮬레이터에서는 10.0.2.2, 실서버에서는 도메인/IP로 교체
+                String publicUrl = "http://10.0.2.2:8080/video/" + relative;
+                result.setComparison_video_path(publicUrl);
+                System.out.println("🎥 변환된 영상 URL: " + publicUrl);
+            }
+
+            // Firestore 저장
             saveAnalyzeResult(result);
         }
         return result;

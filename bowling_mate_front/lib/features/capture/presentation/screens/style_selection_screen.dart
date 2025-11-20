@@ -47,53 +47,73 @@ class StyleSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final styles = ['스트로커', '투핸드', '덤리스', '크랭커'];
+    final styles = [
+      {'name': '스트로커', 'color': const Color(0xFF64B5F6)},
+      {'name': '투핸드', 'color': const Color(0xFF42A5F5)},
+      {'name': '덤리스', 'color': const Color(0xFF1E88E5)},
+      {'name': '크랭커', 'color': const Color(0xFF1565C0)},
+    ];
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFF),
       appBar: AppBar(
         title: const Text('투구 스타일 선택'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: '로그아웃',
-            onPressed: () => _logout(context),
-          ),
-        ],
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black87,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             const Text(
               '분석할 구질을 선택하세요',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF0D47A1),
+              ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 28),
             Expanded(
               child: GridView.builder(
                 itemCount: styles.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 1.1,
+                  crossAxisSpacing: 18,
+                  mainAxisSpacing: 18,
+                  childAspectRatio: 1.05,
                 ),
                 itemBuilder: (context, index) {
-                  final style = styles[index];
-                  return GestureDetector(
+                  final item = styles[index];
+                  final color = item['color'] as Color;
+                  final style = item['name'] as String;
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(18),
                     onTap: () => _navigateToNext(context, style),
-                    child: Card(
-                      shape: RoundedRectangleBorder(
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(18),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withOpacity(0.25),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      elevation: 3,
                       child: Center(
                         child: Text(
                           style,
                           style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ),
@@ -102,10 +122,15 @@ class StyleSelectionScreen extends StatelessWidget {
                 },
               ),
             ),
+            const SizedBox(height: 10),
             const Text(
-              '구질에 따라 AI가 자세를 분석하고 맞춤 피드백을 제공합니다.',
+              '구질에 따라 AI가 자세를 분석하고\n맞춤 피드백을 제공합니다.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey, fontSize: 13),
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: 14,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 12),
           ],
